@@ -11,10 +11,16 @@ class Backend:
     GLOO: str
     MPI: str
     NCCL: str
+    
+
+class Work:
+    def wait(self) -> None: ...
+    def is_completed(self) -> bool: ...
 
 class ProcessGroup:
     def size(self) -> int: ...
     def rank(self) -> int: ...
+    def recv_anysource(self, tensors: List[Tensor], tag: int) -> Work: ...
 
 class ReduceOp:
     SUM: ReduceOp
