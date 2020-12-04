@@ -1,7 +1,9 @@
-# fairscale
+![FairScale Logo](./docs/source/_static/img/fairscale-logo.png)
+
 ![PyPI](https://img.shields.io/pypi/v/fairscale)
 [![Documentation Status](https://readthedocs.org/projects/fairscale/badge/?version=latest)](https://fairscale.readthedocs.io/en/latest/?badge=latest)
 [![CircleCI](https://circleci.com/gh/facebookresearch/fairscale.svg?style=shield)](https://app.circleci.com/pipelines/github/facebookresearch/fairscale/) ![PyPI - License](https://img.shields.io/pypi/l/fairscale) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/facebookresearch/fairscale/blob/master/CONTRIBUTING.md)
+--------------------------------------------------------------------------------
 
 ## Description
 fairscale is a PyTorch extension library for high performance and large scale training for optimizing training on one or across multiple machines/nodes. This library extend basic pytorch capabilities while adding new experimental ones.
@@ -9,9 +11,12 @@ fairscale is a PyTorch extension library for high performance and large scale tr
 fairscale supports:
 * Parallelism:
    * pipeline parallelism (fairscale.nn.Pipe)
-   * tensor parallelism (fairscale.nn.model_parallel)
-* Optimization:
-   * optimizer state sharding (fairscale.optim.oss)
+* Sharded training:
+   * Optimizer state sharding (fairscale.optim.oss)
+   * Sharded grad scaler - automatic mixed precision
+   * Sharded distributed data parallel
+* Optimization at scale:
+   * AdaScale SGD (from fairscale.optim import AdaScale)
 
 
 ## Requirements
@@ -103,7 +108,18 @@ if __name__ == "__main__":
     )
 ```
 
+### AdaScale SGD
 
+AdaScale can be used to wrap a SGD optimizer and to be used in DDP (Distributed Data Parallel)
+training or non-DDP with gradient accumulation. The benefit is to re-use the same LR
+schedule from a baseline batch size when effective batch size is bigger.
+
+Primary goal is to allow scaling to bigger batch sizes without losing model accuracy.
+
+At a high level, we want ML researchers to:
+  * go parallel more easily (i.e. reuse the same LR schedule)
+  * not worrying about lossing accuracy
+  * get same (or higher) GPU efficiency (fewer steps, less networking, etc.)
 
 # Testing
 
